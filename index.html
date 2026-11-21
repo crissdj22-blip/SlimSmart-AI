@@ -164,7 +164,7 @@ button {
 
   <label for="ziMeniu">Alege ziua</label>
 
-  <select id="ziMeniu">
+  <select id="ziMeniu" onchange="schimbMeniul( )">
     <option value="1">Luni</option>
     <option value="2">Marți</option>
     <option value="3">Miercuri</option>
@@ -308,5 +308,18 @@ function calculeaza() {
 }
 </script>
 
+<script>
+function schimbaMeniul() {
+  const zi = document.getElementById("ziMeniu").value;
+  const meniu = document.getElementById("meniuLuni");
+
+  if (zi === "1") {
+    meniu.style.display = "block";
+  } else {
+    meniu.style.display = "none";
+  }
+}
+</script>
+  
 </body>
 </html>
