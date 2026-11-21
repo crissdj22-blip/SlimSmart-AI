@@ -6,39 +6,52 @@
 <title>SlimSmart AI</title>
 
 <style>
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
   background: #FAF8F1;
   color: #26332D;
 }
+
 header {
   background: #174C3A;
   color: white;
   text-align: center;
   padding: 30px 15px;
 }
+
+header h1 {
+  margin: 10px 0;
+}
+
 .card {
   background: white;
-  margin: 20px;
+  max-width: 550px;
+  margin: 20px auto;
   padding: 25px;
   border-radius: 15px;
   box-shadow: 0 3px 12px #00000015;
 }
+
 label {
   display: block;
-  margin-top: 15px;
+  margin-top: 18px;
   font-weight: bold;
 }
+
 input, select {
-  box-sizing: border-box;
   width: 100%;
   padding: 12px;
-  margin-top: 6px;
+  margin-top: 7px;
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 16px;
 }
+
 button {
   width: 100%;
   background: #69B87A;
@@ -48,15 +61,24 @@ button {
   border-radius: 10px;
   font-size: 17px;
   font-weight: bold;
-  margin-top: 20px;
+  margin-top: 22px;
+  cursor: pointer;
 }
+
 #calculator {
   display: none;
 }
+
 #rezultat {
   margin-top: 20px;
-  font-weight: bold;
-  line-height: 1.6;
+  line-height: 1.7;
+}
+
+@media (max-width: 600px) {
+  .card {
+    margin: 15px;
+    padding: 20px;
+  }
 }
 </style>
 </head>
@@ -68,23 +90,31 @@ button {
   <p>Slăbește inteligent. Mănâncă echilibrat.</p>
 </header>
 
-<div class="card" id="start">
+<main>
+
+<section class="card" id="start">
   <h2>Bine ai venit!</h2>
   <p>Descoperă necesarul tău caloric estimativ.</p>
-  <button onclick="incepe()">Începe acum</button>
-</div>
+  <button type="button" onclick="incepe()">
+    Începe acum
+  </button>
+</section>
 
-<div class="card" id="calculator">
+<section class="card" id="calculator">
+
   <h2>Calculator de calorii</h2>
 
   <label for="varsta">Vârsta</label>
-  <input id="varsta" type="number" min="18" max="100">
+  <input id="varsta" type="number"
+         min="18" max="100">
 
-  <label for="greutate">Greutate (kg)</label>
-  <input id="greutate" type="number" min="30" max="350" step="0.1">
+  <label for="greutate">Greutate actuală (kg)</label>
+  <input id="greutate" type="number"
+         min="30" max="350" step="0.1">
 
   <label for="inaltime">Înălțime (cm)</label>
-  <input id="inaltime" type="number" min="100" max="250">
+  <input id="inaltime" type="number"
+         min="100" max="250">
 
   <label for="sex">Parametru pentru calcul</label>
   <select id="sex">
@@ -92,19 +122,39 @@ button {
     <option value="m">Formula masculină</option>
   </select>
 
-<label for="activitate">Activitate fizică</label>
+  <label for="obiectiv">Obiectivul meu</label>
+  <select id="obiectiv">
+    <option value="slabire">Slăbire sănătoasă</option>
+    <option value="mentinere">Menținerea greutății</option>
+    <option value="echilibrat">Alimentație echilibrată</option>
+  </select>
 
-<select id="activitate">
-  <option value="1.2">Sedentar</option>
-  <option value="1.375">Activitate ușoară</option>
-  <option value="1.55">Activitate moderată</option>
-  <option value="1.725">Activitate intensă</option>
-</select>
+  <label for="greutateDorita">
+    Greutatea dorită (kg)
+  </label>
+  <input id="greutateDorita"
+         type="number"
+         min="30" max="350"
+         step="0.1"
+         placeholder="Exemplu: 75">
 
-  <button onclick="calculeaza()">Calculează</button>
+  <label for="activitate">Activitate fizică</label>
+  <select id="activitate">
+    <option value="1.2">Sedentar</option>
+    <option value="1.375">Activitate ușoară</option>
+    <option value="1.55">Activitate moderată</option>
+    <option value="1.725">Activitate intensă</option>
+  </select>
+
+  <button type="button" onclick="calculeaza()">
+    Calculează
+  </button>
 
   <div id="rezultat" aria-live="polite"></div>
-</div>
+
+</section>
+
+</main>
 
 <script>
 function incepe() {
@@ -116,32 +166,77 @@ function calculeaza() {
   const v = Number(document.getElementById("varsta").value);
   const g = Number(document.getElementById("greutate").value);
   const h = Number(document.getElementById("inaltime").value);
+
   const s = document.getElementById("sex").value;
-  const a = Number(document.getElementById("activitate").value);
+  const a = Number(document.getElementById("activitate").value); 
+  const obiectiv = document.getElementById("obiectiv").value;
+
+  const doritaText =
+    document.getElementById("greutateDorita").value;
+
   const rezultat = document.getElementById("rezultat");
 
   if (
+    document.getElementById("varsta").value.trim() === "" ||
+    document.getElementById("greutate").value.trim() === "" ||
+    document.getElementById("inaltime").value.trim() === "" ||
     !Number.isInteger(v) || v < 18 || v > 100 ||
     !Number.isFinite(g) || g < 30 || g > 350 ||
     !Number.isFinite(h) || h < 100 || h > 250
   ) {
-    rezultat.textContent = "Introdu date valide în toate câmpurile.";
+    rezultat.textContent =
+      "Introdu date valide în toate câmpurile obligatorii.";
     return;
+  }
+
+  let dorita = null;
+
+  if (doritaText.trim() !== "") {
+    dorita = Number(doritaText);
+
+    if (
+      !Number.isFinite(dorita) ||
+      dorita < 30 ||
+      dorita > 350
+    ) {
+      rezultat.textContent =
+        "Introdu o greutate dorită validă.";
+      return;
+    }
   }
 
   const baza = 10 * g + 6.25 * h - 5 * v;
   const bmr = baza + (s === "m" ? 5 : -161);
   const mentinere = Math.round(bmr * a);
 
-  rezultat.innerHTML =
-    "Metabolism bazal estimat: " +
+  const obiective = {
+    slabire: "Slăbire sănătoasă",
+    mentinere: "Menținerea greutății",
+    echilibrat: "Alimentație echilibrată"
+  };
+
+  let mesaj =
+    "<strong>Metabolism bazal estimat:</strong> " +
     Math.round(bmr) + " kcal/zi<br>" +
-    "Necesar pentru menținere: " +
-    mentinere + " kcal/zi<br><br>" +
-    "Aceste valori sunt orientative, nu un plan medical de slăbire.";
+    "<strong>Necesar pentru menținere:</strong> " +
+    mentinere + " kcal/zi<br>" +
+    "<strong>Obiectiv:</strong> " +
+    obiective[obiectiv];
+
+  if (dorita !== null) {
+    mesaj +=
+      "<br><strong>Greutatea dorită:</strong> " +
+      dorita + " kg";
+  }
+
+  mesaj +=
+    "<br><br>Valorile sunt estimative. " +
+    "Aplicația nu stabilește încă un deficit caloric " +
+    "sau un plan medical de slăbire.";
+
+  rezultat.innerHTML = mesaj;
 }
 </script>
 
 </body>
 </html>
-```
