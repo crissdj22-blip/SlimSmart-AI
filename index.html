@@ -1,76 +1,145 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SlimSmart AI</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SlimSmart AI</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #FAF8F1;
-      color: #26332D;
-      text-align: center;
-    }
-
-    header {
-      background: #174C3A;
-      color: white;
-      padding: 35px 15px;
-    }
-
-    h1 {
-      margin: 10px 0;
-    }
-
-    .card {
-      background: white;
-      margin: 20px;
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 3px 12px #00000015;
-    }
-
-    button {
-      background: #69B87A;
-      color: #174C3A;
-      border: none;
-      padding: 15px 25px;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: bold;
-    }
-  </style>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #FAF8F1;
+  color: #26332D;
+}
+header {
+  background: #174C3A;
+  color: white;
+  text-align: center;
+  padding: 30px 15px;
+}
+.card {
+  background: white;
+  margin: 20px;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 3px 12px #00000015;
+}
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+}
+input, select {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  margin-top: 6px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+}
+button {
+  width: 100%;
+  background: #69B87A;
+  color: #174C3A;
+  border: none;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: bold;
+  margin-top: 20px;
+}
+#calculator {
+  display: none;
+}
+#rezultat {
+  margin-top: 20px;
+  font-weight: bold;
+  line-height: 1.6;
+}
+</style>
 </head>
 
 <body>
 
-  <header>
-    <h1>🌿 SlimSmart AI</h1>
-    <p>Slăbește inteligent. Mănâncă echilibrat.</p>
-  </header>
+<header>
+  <h1>🌿 SlimSmart AI</h1>
+  <p>Slăbește inteligent. Mănâncă echilibrat.</p>
+</header>
 
-  <div class="card">
-    <h2>Bine ai venit!</h2>
-    <p>Planul tău alimentar personalizat începe aici.</p>
-    <button>Începe acum</button>
-  </div>
+<div class="card" id="start">
+  <h2>Bine ai venit!</h2>
+  <p>Descoperă necesarul tău caloric estimativ.</p>
+  <button onclick="incepe()">Începe acum</button>
+</div>
 
-  <div class="card">
-    <h2>🥗 Plan alimentar</h2>
-    <p>Meniuri zilnice și calorii calculate.</p>
-  </div>
+<div class="card" id="calculator">
+  <h2>Calculator de calorii</h2>
 
-  <div class="card">
-    <h2>🛒 Lista de cumpărături</h2>
-    <p>Organizează mesele și economisește bani.</p>
-  </div>
+  <label for="varsta">Vârsta</label>
+  <input id="varsta" type="number" min="18" max="100">
 
-  <div class="card">
-    <h2>📊 Progresul meu</h2>
-    <p>Urmărește evoluția greutății tale.</p>
-  </div>
+  <label for="greutate">Greutate (kg)</label>
+  <input id="greutate" type="number" min="30" max="350" step="0.1">
+
+  <label for="inaltime">Înălțime (cm)</label>
+  <input id="inaltime" type="number" min="100" max="250">
+
+  <label for="sex">Parametru pentru calcul</label>
+  <select id="sex">
+    <option value="f">Formula feminină</option>
+    <option value="m">Formula masculină</option>
+  </select>
+
+  <label for="activitate">Activitate fizică</label>
+  <select id="activitate">
+    <option value="1.2">Sedentar</option>
+    <option value="1.375">Activitate ușoară</option>
+    <option value="1.55">Activitate moderată</option>
+    <option value="1.725">Activitate intensă</option>
+  </select>
+
+  <button onclick="calculeaza()">Calculează</button>
+
+  <div id="rezultat" aria-live="polite"></div>
+</div>
+
+<script>
+function incepe() {
+  document.getElementById("start").style.display = "none";
+  document.getElementById("calculator").style.display = "block";
+}
+
+function calculeaza() {
+  const v = Number(document.getElementById("varsta").value);
+  const g = Number(document.getElementById("greutate").value);
+  const h = Number(document.getElementById("inaltime").value);
+  const s = document.getElementById("sex").value;
+  const a = Number(document.getElementById("activitate").value);
+  const rezultat = document.getElementById("rezultat");
+
+  if (
+    !Number.isInteger(v) || v < 18 || v > 100 ||
+    !Number.isFinite(g) || g < 30 || g > 350 ||
+    !Number.isFinite(h) || h < 100 || h > 250
+  ) {
+    rezultat.textContent = "Introdu date valide în toate câmpurile.";
+    return;
+  }
+
+  const baza = 10 * g + 6.25 * h - 5 * v;
+  const bmr = baza + (s === "m" ? 5 : -161);
+  const mentinere = Math.round(bmr * a);
+
+  rezultat.innerHTML =
+    "Metabolism bazal estimat: " +
+    Math.round(bmr) + " kcal/zi<br>" +
+    "Necesar pentru menținere: " +
+    mentinere + " kcal/zi<br><br>" +
+    "Aceste valori sunt orientative, nu un plan medical de slăbire.";
+}
+</script>
 
 </body>
 </html>
