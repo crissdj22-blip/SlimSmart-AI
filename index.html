@@ -348,14 +348,17 @@ function calculeaza() {
 </script>
 
 <script>
+javascript
 function schimbaMeniul() {
   const zi = document.getElementById("ziMeniu").value;
-  const meniu = document.getElementById("meniuLuni");
 
-  if (zi === "1") {
-    meniu.style.display = "block";
-  } else {
-    meniu.style.display = "none";
+  const luni = document.getElementById("meniuLuni");
+  const marti = document.getElementById("meniuMarti");
+
+  luni.style.display = zi === "1" ? "block" : "none";
+  marti.style.display = zi === "2" ? "block" : "none";
+}
+  
   }
 }
 </script>
