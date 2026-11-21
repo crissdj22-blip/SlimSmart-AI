@@ -92,13 +92,24 @@ button {
     <option value="m">Formula masculină</option>
   </select>
 
-  <label for="activitate">Activitate fizică</label>
-  <select id="activitate">
-    <option value="1.2">Sedentar</option>
-    <option value="1.375">Activitate ușoară</option>
-    <option value="1.55">Activitate moderată</option>
-    <option value="1.725">Activitate intensă</option>
-  </select>
+  <label for="obiectiv">Obiectivul meu</label>
+<select id="obiectiv">
+  <option value="slabire">Slăbire sănătoasă</option>
+  <option value="mentinere">Menținerea greutății</option>
+  <option value="echilibrat">Alimentație echilibrată</option>
+</select>
+
+<label for="greutateDorita">
+  Greutatea dorită (kg)
+</label>
+<input
+  id="greutateDorita"
+  type="number"
+  min="30"
+  max="350"
+  step="0.1"
+  placeholder="Exemplu: 75"
+>
 
   <button onclick="calculeaza()">Calculează</button>
 
